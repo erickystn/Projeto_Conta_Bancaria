@@ -17,7 +17,7 @@ ${" ".repeat(60)}
             1 - Criar Conta                                 
             2 - Listar todas as Contas                      
             3 - Buscar Conta por Numero                     
-            4 - Atualizar dados da Conta                     
+            4 - Atualizar dados da Conta                    
             5 - Apagar Conta                                
             6 - Sacar                                       
             7 - Depositar                                   
@@ -25,7 +25,7 @@ ${" ".repeat(60)}
             9 - Buscar Conta por Titular                    
             0 - Sair                                        
 ${" ".repeat(60)}
-${"*".repeat(50)}
+${"*".repeat(60)}
 `;
 
   
