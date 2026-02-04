@@ -11,96 +11,86 @@ export class ContaController implements ContaRepository {
   }
 
   public cadastrar(conta: Conta): void {
+
     this._listaContas.push(conta);
-    console.log(
-      colors.fg.green,
-      `Conta número: ${conta.numero} foi criada! `,
-      colors.reset,
-    );
+    console.log(colors.fg.green,`Conta número: ${conta.numero} foi criada! `,colors.reset);
+
   }
 
   public atualizar(conta: Conta): boolean {
-    const indice = this._listaContas.findIndex(
-      (c) => c.numero === conta.numero,
-    );
+    
+    const indice = this._listaContas.findIndex((c) => c.numero === conta.numero);
 
     if (indice !== -1) {
+
       this._listaContas[indice] = conta;
+      console.log(colors.fg.green,`Conta número: ${conta.numero} atualizada com sucesso! `,colors.reset);
       return true;
+
     } else {
-      console.log(
-        colors.fg.red,
-        `Conta número: ${conta.numero} não encontrada! `,
-        colors.reset,
-      );
+
+      console.log(colors.fg.red,`Conta número: ${conta.numero} não encontrada! `,colors.reset);
       return false;
+
     }
   }
 
   public deletar(numero: number): void {
-    const indice = this._listaContas.findIndex(
-      (conta) => conta.numero === numero,
-    );
+
+    const indice = this._listaContas.findIndex((conta) => conta.numero === numero);
 
     if (indice !== -1) {
-      this._listaContas.splice(indice, 1); // Remove 1 elemento a partir do índice encontrado
-      console.log(
-        colors.fg.green,
-        `Conta número: ${numero} excluída com sucesso!`,
-        colors.reset,
-      );
+
+      this._listaContas.splice(indice, 1); 
+      console.log( colors.fg.green,`Conta número: ${numero} excluída com sucesso!`,colors.reset);
+
     } else {
-      console.log(
-        colors.fg.red,
-        `Conta número: ${numero} não encontrada!`,
-        colors.reset,
-      );
+      console.log( colors.fg.red,`Conta número: ${numero} não encontrada!`, colors.reset);
     }
   }
 
   public sacar(numero: number, valor: number): void {
+
     const conta = this.buscarPorNumero(numero);
     if (conta) {
+
       conta.sacar(valor);
+      console.log(colors.fg.green,`Saque de R$ ${valor.toFixed(2)} realizado com sucesso na conta número: ${numero} `,colors.reset);
+
     } else {
-      console.log(
-        colors.fg.red,
-        `Conta número: ${numero} não encontrada! `,
-        colors.reset,
-      );
+
+      console.log(colors.fg.red,`Conta número: ${numero} não encontrada! `,colors.reset);
     }
   }
 
   public depositar(numero: number, valor: number): void {
+
     const conta = this.buscarPorNumero(numero);
     if (conta) {
+
       conta.depositar(valor);
-    } else {
-      console.log(
-        colors.fg.red,
-        `Conta número: ${numero} não encontrada! `,
-        colors.reset,
+      console.log(colors.fg.green,`Depósito de R$ ${valor.toFixed(2)} realizado com sucesso na conta número: ${numero} `,
+        colors.reset
       );
+
+    } else {
+
+      console.log(colors.fg.red,`Conta número: ${numero} não encontrada! `,colors.reset);
+
     }
   }
 
-  public transferir(
-    numeroOrigem: number,
-    numeroDestino: number,
-    valor: number,
-  ): void {
+  public transferir(numeroOrigem: number, numeroDestino: number, valor: number): void {
+
     const contaOrigem =this.buscarPorNumero(numeroOrigem);
     const contaDestino = this.buscarPorNumero(numeroDestino);
+
     if (contaOrigem && contaDestino) {
       if (contaOrigem.sacar(valor)) {
         contaDestino.depositar(valor);
       }
     } else {
-      console.log(
-        colors.fg.red,
-        `Conta origem ou destino não encontrada! `,
-        colors.reset,
-      );
+      console.log(colors.fg.red, `Conta origem ou destino não encontrada! `,colors.reset);
     }
   }
 

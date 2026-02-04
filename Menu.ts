@@ -13,6 +13,8 @@ const contaController = new ContaController();
 export function main() {
 
     criarContas(10).forEach((conta) => contaController.cadastrar(conta));
+
+    
     let opcao: number;
     const tiposConta = ["corrente", "poupanca"];
 
@@ -61,46 +63,41 @@ ${"*".repeat(60)}
                 let saldo = rls.questionFloat("Digite o saldo inicial da conta: ");
                 const tipo =
                     rls.keyInSelect(tiposConta, "Escolha o tipo de conta: ", { cancel: false }) + 1;
+
+
                 if (tipo === 1) {
-                    const limite = rls.questionFloat(
-                        "Digite o limite de crédito da conta corrente: ",
-                    );
-                    contaController.cadastrar(
-                        new ContaCorrente(numero, agencia, titular, saldo, limite),
-                    );
+
+                    const limite = rls.questionFloat("Digite o limite de crédito da conta corrente: ");
+                    contaController.cadastrar(new ContaCorrente(numero, agencia, titular, saldo, limite));
+
                 } else if (tipo === 2) {
-                    const aniversario = rls.questionInt(
-                        "Digite o dia de aniversário da conta poupança: ",
-                    );
-                    contaController.cadastrar(
-                        new ContaPoupanca(numero, agencia, titular, saldo, aniversario),
-                    );
+
+                    const aniversario = rls.questionInt("Digite o dia de aniversário da conta poupança: ");
+                    contaController.cadastrar(new ContaPoupanca(numero, agencia, titular, saldo, aniversario));
+
                 } else {
+
                     console.log(colors.fg.red, "\nTipo de conta inválido!", colors.reset);
-                    continue;
+
                 }
 
                 keyPress();
                 break;
             }
             case 2: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nListar todas as Contas\n`,
-                    colors.reset,
-                );
+            
+                console.log(colors.fg.whitestrong,`\nListar todas as Contas\n`,colors.reset);
                 contaController.listarTodas();
                 keyPress();
                 break;
+
             }
             case 3: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nBuscar Conta por Numero\n`,
-                    colors.reset,
-                );
+
+                console.log(colors.fg.whitestrong, `\nBuscar Conta por Numero\n`, colors.reset);;
                 process.stdout.write("Digite o numero da conta que deseja buscar: ");
                 const conta = contaController.buscarPorNumero(rls.questionInt(""));
+
                 if (!conta) {
                     console.log(colors.fg.red, "\nConta não encontrada!", colors.reset);
                 } else {
@@ -110,41 +107,27 @@ ${"*".repeat(60)}
                 break;
             }
             case 4: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nAtualizar dados da Conta\n`,
-                    colors.reset,
-                );
-                const numBuscado = rls.questionInt(
-                    "Digite o numero da conta que deseja atualizar: ",
-                );
+                console.log(colors.fg.whitestrong,`\nAtualizar dados da Conta\n`,colors.reset);
+                const numBuscado = rls.questionInt( "Digite o numero da conta que deseja atualizar: " );
                 const conta = contaController.buscarPorNumero(numBuscado);
+
                 if (conta) {
                     const titular = rls.question("Digite o nome do titular da conta: ");
                     const agencia = rls.questionInt("Digite o número da agência: ");
                     const saldo = rls.questionFloat("Digite o saldo da conta: ");
+
                     if (conta.tipo === 1) {
-                        const limite = rls.questionFloat(
-                            "Digite o limite de crédito da conta corrente: ",
-                        );
-                        contaController.atualizar(
-                            new ContaCorrente(conta.numero, agencia, titular, saldo, limite),
-                        );
+
+                        const limite = rls.questionFloat( "Digite o limite de crédito da conta corrente: " );
+                        contaController.atualizar(new ContaCorrente(conta.numero, agencia, titular, saldo, limite));
                     } else {
-                        const aniversario = rls.questionInt(
-                            "Digite o dia de aniversário da conta poupança: ",
-                        );
-                        contaController.atualizar(
-                            new ContaPoupanca(
-                                conta.numero,
-                                agencia,
-                                titular,
-                                saldo,
-                                aniversario,
-                            ),
-                        );
+                        
+                        const aniversario = rls.questionInt( "Digite o dia de aniversário da conta poupança: ");
+                        contaController.atualizar(new ContaPoupanca(conta.numero,agencia,titular,saldo,aniversario));
                     }
+
                 } else {
+
                     console.log(colors.fg.red, "\nConta não encontrada!", colors.reset);
                 }
 
@@ -152,36 +135,32 @@ ${"*".repeat(60)}
                 break;
             }
             case 5: {
+
                 console.log(colors.fg.whitestrong, `\nApagar Conta\n`, colors.reset);
                 process.stdout.write("Digite o numero da conta que deseja apagar: ");
                 contaController.deletar(rls.questionInt(""));
                 keyPress();
                 break;
+
             }
             case 6: {
+
                 console.log(colors.fg.whitestrong, `\nSacar\n`, colors.reset);
-                contaController.sacar(
-                    rls.questionInt("Digite o numero da conta: "),
-                    rls.questionFloat("Digite o valor a ser sacado: "),
-                );
+                contaController.sacar(rls.questionInt("Digite o numero da conta: "),rls.questionFloat("Digite o valor a ser sacado: "));
                 keyPress();
                 break;
+
             }
             case 7: {
+
                 console.log(colors.fg.whitestrong, `\nDepositar\n`, colors.reset);
-                contaController.depositar(
-                    rls.questionInt("Digite o numero da conta: "),
-                    rls.questionFloat("Digite o valor a ser depositado: "),
-                );
+                contaController.depositar(rls.questionInt("Digite o numero da conta: "),rls.questionFloat("Digite o valor a ser depositado: "),);
                 keyPress();
                 break;
+
             }
             case 8: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nTransferir valores entre Contas\n`,
-                    colors.reset,
-                );
+                console.log(colors.fg.whitestrong,`\nTransferir valores entre Contas\n`,colors.reset);
                 contaController.transferir(
                     rls.questionInt("Digite o numero da conta de origem: "),
                     rls.questionInt("Digite o numero da conta de destino: "),
@@ -191,14 +170,9 @@ ${"*".repeat(60)}
                 break;
             }
             case 9: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nBuscar Conta por Titular\n`,
-                    colors.reset,
-                );
-                const contas = contaController.buscarPorTitular(
-                    rls.question("Digite o nome de titular que deseja buscar: "),
-                );
+                console.log(colors.fg.whitestrong,`\nBuscar Conta por Titular\n`,colors.reset);
+                const contas = contaController.buscarPorTitular(rls.question("Digite o nome de titular que deseja buscar: "));
+
                 if (contas.length === 0) {
                     console.log(colors.fg.red, "\nNenhuma conta encontrada!", colors.reset);
                 } else {
@@ -208,11 +182,7 @@ ${"*".repeat(60)}
                 break;
             }
             default: {
-                console.log(
-                    colors.fg.whitestrong,
-                    `\nOpcao invalida! \n`,
-                    colors.reset,
-                );
+                console.log(colors.fg.whitestrong,`\nOpcao invalida! \n`,colors.reset);
                 keyPress();
                 break;
             }
@@ -238,7 +208,7 @@ function keyPress(): void {
     rls.prompt();
 }
 
-function criarContas(numero: number): Conta[] {
+function criarContas(numero: number): Array<Conta> {
     const nomes = ["Ana", "Bruno", "Carlos", "Daniela", "Eduardo", "Fernanda"];
     const sobrenomes = ["Silva", "Souza", "Oliveira", "Pereira", "Lima", "Gomes"];
     const valoresIniciais = [100, 500, 1000, 1500, 2000, 2500];
@@ -262,11 +232,11 @@ function criarContas(numero: number): Conta[] {
     return contas;
 }
 
-const normalize = (str: string) =>
-    str
-        .normalize("NFD") // 1. Separa o acento da letra
-        .replace(/[\u0300-\u036f]/g, "") // 2. Remove os acentos separados
-        .toLowerCase();
+// const normalize = (str: string) =>
+//     str
+//         .normalize("NFD") // 1. Separa o acento da letra
+//         .replace(/[\u0300-\u036f]/g, "") // 2. Remove os acentos separados
+//         .toLowerCase();
 
 main();
 
