@@ -1,4 +1,6 @@
-export class Conta {
+import { currencyBr } from "../util/CurrencyBr";
+
+export abstract class Conta {
   private _numero: number;
   private _agencia: number;
   private _tipo: number;
@@ -79,6 +81,6 @@ export class Conta {
     console.log("Agência: " + this._agencia);
     console.log("Tipo da Conta: " + tipo);
     console.log("Titular: " + this._titular);
-    console.log("Saldo: " + this._saldo.toFixed(2));
+    console.log("Saldo: " + currencyBr(this._saldo));
   }
 }
