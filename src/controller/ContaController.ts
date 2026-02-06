@@ -1,6 +1,7 @@
 import { Conta } from "../model/Conta";
 import { ContaRepository } from "../repository/ContaRepository";
 import { colors } from "../util/Colors";
+import { currencyBr } from "../util/CurrencyBr";
 
 export class ContaController implements ContaRepository {
   private _listaContas = new Array<Conta>();
@@ -52,10 +53,10 @@ export class ContaController implements ContaRepository {
   public sacar(numero: number, valor: number): void {
 
     const conta = this.buscarPorNumero(numero);
-    if (conta) {
+    if (conta ) {
 
       conta.sacar(valor);
-      console.log(colors.fg.green,`Saque de R$ ${valor.toFixed(2)} realizado com sucesso na conta número: ${numero} `,colors.reset);
+      console.log(colors.fg.green,`Conta número: ${conta.numero}: Saque de ${valor} efetuado com sucesso! `,colors.reset);
 
     } else {
 
@@ -88,6 +89,7 @@ export class ContaController implements ContaRepository {
     if (contaOrigem && contaDestino) {
       if (contaOrigem.sacar(valor)) {
         contaDestino.depositar(valor);
+        console.log(colors.fg.green,`Valor de ${currencyBr(valor)} transferido de conta ${numeroOrigem} para conta ${numeroDestino} com sucesso! `,colors.reset);
       }
     } else {
       console.log(colors.fg.red, `Conta origem ou destino não encontrada! `,colors.reset);
@@ -104,10 +106,11 @@ export class ContaController implements ContaRepository {
     );
   }
 
-  public buscarPorNumero(numero: number): Conta | undefined {
-    return this._listaContas.find((conta) => conta.numero === numero);
+  public buscarPorNumero(numero: number): Conta | null {
+    return this._listaContas.find((conta) => conta.numero === numero) || null;
   }
   public numeroContaExists(numero: number): boolean {
     return this._listaContas.some((conta) => conta.numero === numero);
   }
+
 }

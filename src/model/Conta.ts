@@ -1,3 +1,4 @@
+import { colors } from "../util/Colors";
 import { currencyBr } from "../util/CurrencyBr";
 
 export abstract class Conta {
@@ -58,6 +59,8 @@ export abstract class Conta {
       return false;
     }
     this._saldo -= valor;
+    console.log(colors.fg.green, `Saque de R$ ${valor.toFixed(2)} realizado com sucesso na conta número: ${this._numero} `, colors.reset);
+
     return true;
   }
   public depositar(valor: number): void {
