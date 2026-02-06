@@ -56,7 +56,7 @@ ${"*".repeat(60)}
             case 1: {
                 console.log(colors.fg.whitestrong, `\nCriar Conta\n`, colors.reset);
 
-                let titular = Input.question("Digite o nome do titular da conta: ") ;
+                let titular = Input.question("Digite o nome do titular da conta: ");
                 let agencia = Math.abs(Input.questionInt("Digite o número da agência: "));
                 const numero = Math.abs(contaController.gerarNumero());
                 let saldo = Math.abs(Input.questionFloat("Digite o saldo inicial da conta: "));
@@ -109,21 +109,35 @@ ${"*".repeat(60)}
             }
             case 4: {
                 console.log(colors.fg.whitestrong, `\nAtualizar dados da Conta\n`, colors.reset);
-                const numBuscado = Input.questionInt("Digite o numero da conta que deseja atualizar: ");
-                const conta = contaController.buscarPorNumero(numBuscado);
+                const numBuscado: number = Input.questionInt("Digite o numero da conta que deseja atualizar: ");
+                const conta: Conta | null = contaController.buscarPorNumero(numBuscado);
 
                 if (conta) {
-                    const titular = Input.question("Digite o nome do titular da conta: ");
-                    const agencia = Math.abs(Input.questionInt("Digite o número da agência: "));
-                    const saldo = Math.abs(Input.questionFloat("Digite o saldo da conta: "));
+                    let resposta: string = Input.question("Digite o nome do titular da conta ou aperte Enter para manter: ");
+                    const titular: string = resposta !== "" ? resposta : conta.titular;
+
+                    resposta = Input.questionNumberOrEnter("Digite o número da agência ou aperte Enter para manter: ");
+                    const agencia: number = resposta !== "" ? parseInt(resposta) : conta.agencia;
+
+                    resposta = Input.questionNumberOrEnter("Digite o saldo da conta ou aperte Enter para manter: ");
+                    const saldo: number = resposta !== "" ? parseFloat(resposta) : conta.saldo;
 
                     if (conta.tipo === 1) {
 
-                        const limite = Math.abs(Input.questionFloat("Digite o limite de crédito da conta corrente: "));
+                        resposta = Input.questionNumberOrEnter("Digite o limite de crédito da conta corrente ou aperte Enter para manter: ");
+                        const limite = resposta !== "" ? parseFloat(resposta) : (conta as ContaCorrente).limite;
                         contaController.atualizar(new ContaCorrente(conta.numero, agencia, titular, saldo, limite));
                     } else {
 
-                        const aniversario = Input.questionIntRange("Digite o dia de aniversário da conta poupança: ", 1, 28);
+                        resposta = Input.question("Digite novo dia de aniversário da conta poupança e pressione Enter para manter: ", {
+                            limit: (input) => {
+                                if(input.trim()==="") return true;
+                                const n = Number(input.trim());
+                                return !isNaN(n) && Number.isInteger(n) && n >= 1 && n <= 28;
+                            },
+                            limitMessage: `Erro: O dia deve ser um número inteiro entre 1 e 28 ou Enter.`
+                        })
+                        const aniversario: number = resposta !== "" ? parseInt(resposta) : (conta as ContaPoupanca).aniversario;
                         contaController.atualizar(new ContaPoupanca(conta.numero, agencia, titular, saldo, aniversario));
                     }
 
@@ -138,8 +152,18 @@ ${"*".repeat(60)}
             case 5: {
 
                 console.log(colors.fg.whitestrong, `\nApagar Conta\n`, colors.reset);
-                process.stdout.write("Digite o numero da conta que deseja apagar: ");
-                contaController.deletar(Input.questionInt(""));
+
+                const numConta = Input.questionInt("Digite o numero da conta que deseja apagar: ");
+                if(contaController.numeroContaExists(numConta)){
+                    contaController.buscarPorNumero(numConta)?.visualizar();
+                    const confirm:number = Input.keyInYN("Deseja realmente excluir essa conta? ");
+                    if(confirm === 0){ contaController.deletar(numConta)}
+                    else{
+                        console.log(colors.fg.red, "\nOperação Cancelada!", colors.reset); 
+                    };
+                }else{
+                   console.log(colors.fg.red, "\nConta não encontrada!", colors.reset); 
+                }
                 keyPress();
                 break;
 
@@ -239,16 +263,15 @@ function criarContas(numero: number): Array<Conta> {
 //         .replace(/[\u0300-\u036f]/g, "") // 2. Remove os acentos separados
 //         .toLowerCase();
 
- main();
+main();
 
- // ATUALIZAÇÕES/DIFERENÇAS DO CODIGO DO INSTRUTOR
+// ATUALIZAÇÕES/DIFERENÇAS DO CODIGO DO INSTRUTOR
 // 1 - Quaisquer input negativos serão convertido em numero positivo
-// 2 -Foi implementado dentro da classe estatica Input, um novo metodo que limita 
+// 2 -Foi implementado dentro da classe estatica Input, um novo metodo que limita
 // valores Inteiros dentro de um range decidido pelo dev.
 // 3 - Foi melhorada a logica da conta corrente, por exemplo:
 // -- Sacar - Caso o valor ultrapasse o saldo, ele pega do limite
-// -- Depositar - A cada deposito em contas com limite já utilizado, 1º o valor vai 
+// -- Depositar - A cada deposito em contas com limite já utilizado, 1º o valor vai
 //          para limte e nao saldo, até o limite utilizado seja quitado.
-// -- Visualizar - Mostra o valor disponível/utilizado do limite da conta 
+// -- Visualizar - Mostra o valor disponível/utilizado do limite da conta
 //          juntamente com limite de cheque especial definido na criação da conta
-

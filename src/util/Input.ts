@@ -82,7 +82,7 @@ export class Input {
      * 4. Retorna a string UTF-8 correta
      *
      */
-    static question(pergunta: string): string {
+    static question(pergunta: string, options?: BasicOptions): string {
 
         // Detecta o encoding (só na primeira vez)
         this.detectarEncoding();
@@ -94,7 +94,8 @@ export class Input {
 
             // Lê a resposta como 'binary' (bytes brutos em CP850)
             const respostaRaw = readlinesync.question(pergunta, {
-                encoding: 'binary'
+                encoding: 'binary',
+                ...options
             });
 
             // Converte os bytes de CP850 → UTF-8
@@ -103,7 +104,7 @@ export class Input {
 
         } else {
             // Console já está em UTF-8, lê direto
-            return readlinesync.question(pergunta);
+            return readlinesync.question(pergunta, options);
         }
     }
 
@@ -190,4 +191,21 @@ export class Input {
         }));
     }
 
+    static questionNumberOrEnter(pergunta: string ): string{
+        rls.keyIn()
+        return rls.question(pergunta, {
+            limit: (input) => {
+                const n = Number(input);
+                // É um número válido? (!isNaN)
+                return !isNaN(n) || input.trim() =="" ;
+            },
+            limitMessage: `Erro: Digite um numero ou Enter.`
+        });
+    }
+
+    static keyInYN(pergunta:string):number{
+            return rls.keyInSelect(["Sim","Não"],pergunta,{cancel: false});
+    }
+
+    
 }

@@ -40,14 +40,9 @@ export class ContaController implements ContaRepository {
 
     const indice = this._listaContas.findIndex((conta) => conta.numero === numero);
 
-    if (indice !== -1) {
-
       this._listaContas.splice(indice, 1); 
-      console.log( colors.fg.green,`Conta número: ${numero} excluída com sucesso!`,colors.reset);
+      console.log( colors.fg.green,`\nConta número: ${numero} excluída com sucesso!\n`,colors.reset);
 
-    } else {
-      console.log( colors.fg.red,`Conta número: ${numero} não encontrada!`, colors.reset);
-    }
   }
 
   public sacar(numero: number, valor: number): void {
