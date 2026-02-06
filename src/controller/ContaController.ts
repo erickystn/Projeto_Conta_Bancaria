@@ -18,7 +18,7 @@ export class ContaController implements ContaRepository {
 
   }
 
-  public atualizar(conta: Conta): boolean {
+  public atualizar(conta: Conta): void {
     
     const indice = this._listaContas.findIndex((c) => c.numero === conta.numero);
 
@@ -26,12 +26,12 @@ export class ContaController implements ContaRepository {
 
       this._listaContas[indice] = conta;
       console.log(colors.fg.green,`Conta número: ${conta.numero} atualizada com sucesso! `,colors.reset);
-      return true;
+
 
     } else {
 
       console.log(colors.fg.red,`Conta número: ${conta.numero} não encontrada! `,colors.reset);
-      return false;
+
 
     }
   }

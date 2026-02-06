@@ -56,7 +56,7 @@ ${"*".repeat(60)}
             case 1: {
                 console.log(colors.fg.whitestrong, `\nCriar Conta\n`, colors.reset);
 
-                let titular = Input.question("Digite o nome do titular da conta: ");
+                let titular = Input.question("Digite o nome do titular da conta: ") ;
                 let agencia = Math.abs(Input.questionInt("Digite o número da agência: "));
                 const numero = Math.abs(contaController.gerarNumero());
                 let saldo = Math.abs(Input.questionFloat("Digite o saldo inicial da conta: "));
@@ -240,4 +240,15 @@ function criarContas(numero: number): Array<Conta> {
 //         .toLowerCase();
 
  main();
+
+ // ATUALIZAÇÕES/DIFERENÇAS DO CODIGO DO INSTRUTOR
+// 1 - Quaisquer input negativos serão convertido em numero positivo
+// 2 -Foi implementado dentro da classe estatica Input, um novo metodo que limita 
+// valores Inteiros dentro de um range decidido pelo dev.
+// 3 - Foi melhorada a logica da conta corrente, por exemplo:
+// -- Sacar - Caso o valor ultrapasse o saldo, ele pega do limite
+// -- Depositar - A cada deposito em contas com limite já utilizado, 1º o valor vai 
+//          para limte e nao saldo, até o limite utilizado seja quitado.
+// -- Visualizar - Mostra o valor disponível/utilizado do limite da conta 
+//          juntamente com limite de cheque especial definido na criação da conta
 
