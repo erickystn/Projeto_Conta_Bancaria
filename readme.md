@@ -97,6 +97,31 @@ Este projeto foi estruturado para:
 
 <br />
 
+### 🧭 Passo a Passo de Uso no Terminal
+
+A aplicação interativa é operada através do console via comandos gerenciados pela classe customizada `Input`:
+
+1. **Criar Conta (Opção 1):** Cadastre uma nova conta informando titular, número de agência, saldo inicial e selecione entre `1 - Conta Corrente` (com limite de crédito/cheque especial) ou `2 - Conta Poupança` (com dia de aniversário de 1 a 28).
+2. **Listar Todas as Contas (Opção 2):** Exibe todas as contas em memória com seus respectivos saldos, limites e titulares.
+3. **Buscar Conta por Número (Opção 3):** Localiza e imprime os detalhes de uma conta específica a partir do seu ID numérico.
+4. **Atualizar Dados (Opção 4):** Permite alterar seletivamente os dados da conta. É possível manter qualquer dado original simplesmente pressionando `Enter`.
+5. **Apagar Conta (Opção 5):** Exclusão segura com prévia dos dados e confirmação explícita (`Sim/Não`) antes da remoção definitiva.
+6. **Sacar (Opção 6):** Realiza a retirada de valores. Em Contas Correntes, caso o valor exceda o saldo, o sistema utiliza automaticamente o limite de crédito disponível.
+7. **Depositar (Opção 7):** Credita o valor na conta. Caso a conta esteja utilizando o limite de cheque especial, o depósito quita prioritariamente o limite utilizado antes de elevar o saldo.
+8. **Transferir entre Contas (Opção 8):** Movimenta valores entre contas de origem e destino com validação de saldo e limite.
+9. **Buscar por Titular (Opção 9):** Busca textual por nome do titular (insensível a maiúsculas/minúsculas).
+10. **Sair (Opção 0):** Encerra a aplicação exibindo os créditos e links do desenvolvedor.
+
+<br />
+
+## 🎯 Diferenciais de Implementação
+
+Além do CRUD padrão, o projeto implementa regras de negócio financeiras refinadas:
+* **Gestão Inteligente de Cheque Especial:** No saque, se o saldo for insuficiente mas houver limite disponível, a operação é autorizada e o limite é debitado. No depósito, a recomposição do limite consumido tem prioridade absoluta antes de gerar saldo positivo.
+* **Classe Utilitária de Terminal (`Input.ts`):** Tratamento multiplataforma de encoding para Windows (chaveamento automático para `chcp 65001` / UTF-8 e decodificação CP850), sanitização de inputs numéricos negativos (`Math.abs`) e suporte a campos opcionais com tecla `Enter`.
+
+<br />
+
 ## Diagrama de Classes
 
 
@@ -151,11 +176,11 @@ Estrutura organizada para facilitar **manutenção, escalabilidade e leitura té
 ```text
 📦 conta_bancaria
  ┣ 📂 src
- ┃ ┣ 📂 controller     # Regras de aplicação
- ┃ ┣ 📂 model          # Entidades de domínio
- ┃ ┣ 📂 repository     # Persistência simulada
- ┃ ┗ 📂 util           # Utilidades e helpers
- ┣ 📜 Menu.ts          # Ponto de entrada da principal
+ ┃ ┣ 📂 controller     # Regras de aplicação (ContaController)
+ ┃ ┣ 📂 model          # Entidades de domínio (Conta, ContaCorrente, ContaPoupanca)
+ ┃ ┣ 📂 repository     # Contratos de persistência (ContaRepository)
+ ┃ ┗ 📂 util           # Utilitários (Input, Cores)
+ ┣ 📜 Menu.ts          # Ponto de entrada da aplicação
  ┗ 📜 tsconfig.json
 ```
 
@@ -176,7 +201,7 @@ Estrutura organizada para facilitar **manutenção, escalabilidade e leitura té
 - **Ferramentas & Qualidade**
   - Git & GitHub
   - Mermaid (diagramas UML)
-  - CLI interativa (terminal)
+  - CLI interativa (terminal com readline-sync)
 
 <br />
 
@@ -193,7 +218,7 @@ git clone https://github.com/erickystn/Projeto_Conta_Bancaria.git
 **2️⃣ Acesse a pasta do projeto via terminal**
 
 ```bash
-cd projeto_conta_bancaria
+cd Projeto_Conta_Bancaria
 ```
 
 **3️⃣ Instale as dependências**
@@ -205,7 +230,52 @@ npm install
 **4️⃣ Execute a aplicação**
 
 ```bash
+# Execução direta via ts-node:
 ts-node Menu.ts
+
+# Ou via npx (sem instalação global):
+npx ts-node Menu.ts
+```
+
+<br />
+
+## 💻 Exemplos de Uso e Código
+
+### 1. Polimorfismo e Regras de Operações Bancárias
+```typescript
+import { ContaCorrente } from "./src/model/ContaCorrente";
+import { ContaPoupanca } from "./src/model/ContaPoupanca";
+import { ContaController } from "./src/controller/ContaController";
+
+const contas = new ContaController();
+
+// 1. Criação de Conta Corrente (saldo: R$ 500, limite: R$ 1.000)
+const cc = new ContaCorrente(contas.gerarNumero(), 123, "Ericky Santana", 500.0, 1000.0);
+contas.cadastrar(cc);
+
+// 2. Saque utilizando saldo + parte do limite de cheque especial
+cc.sacar(700.0); // Saldo fica 0 e o limite passa a ser consumido em R$ 200
+
+// 3. Depósito recompondo o limite prioritariamente
+cc.depositar(300.0); // R$ 200 quitam o limite e R$ 100 viram saldo positivo
+
+// 4. Criação de Conta Poupança com data de rendimento
+const cp = new ContaPoupanca(contas.gerarNumero(), 123, "Maria Silva", 2500.0, 15);
+contas.cadastrar(cp);
+```
+
+### 2. Formatação de Dados no Terminal (`visualizar()`)
+```text
+***********************************************************
+Dados da Conta:
+***********************************************************
+Numero da Conta: 1
+Agência: 123
+Tipo da Conta: Conta Corrente
+Titular: Ericky Santana
+Saldo: R$ 100.00
+Limite de Crédito: R$ 1000.00
+Limite Disponível: R$ 1000.00
 ```
 
 <br />
